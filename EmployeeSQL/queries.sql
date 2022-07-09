@@ -1,39 +1,8 @@
 
--- 6. List all employees in the Sales department, including their employee number, 
--- last name, first name, and department name.
-
--- 7. List all employees in the Sales and Development departments, including their 
--- employee number, last name, first name, and department name.
-
--- 8. In descending order, list the frequency count of employee last names,
---  i.e., how many employees share each last name.
-
--- examples---------------------------------------
- Bonus 1:
--- Create a query to view cities in Queensland
-SELECT city, state
-FROM cities
-WHERE state = 'Queensland';
-
--- Bonus 2:
--- Create a query to view cities and states
--- with a population less than 1,000,000
-SELECT *
-FROM cities
-WHERE population < 1000000;
-
--- Bonus 3:
--- Create a query to view the city in Queensland
--- with a population of less than 1,000,000
-SELECT *
-FROM cities
-WHERE population < 1000000
-AND state = 'Queensland';
-
 ----------------------------------------------------------
 -- 1. List the following details of each employee: employee number, last name, first name, sex, 
 -- and salary.
---need to join Salary table to get salary info
+--Need to join Salary table to get salary info
 
 SELECT Employees.emp_no, Employees.first_name, Employees.last_name, Employees.SEX, Salaries.salary
 FROM Salaries
@@ -53,23 +22,23 @@ WHERE (hire_date BETWEEN '1986/01/01' AND '1986/12/31');
 -- 3. List the manager of each department with the following information: 
 -- department number, department name, the manager's employee number, last name, first name.
 
-
-SELECT Dept_Manager.Dept_no, Department.Dept_name, Employees.first_name, Employees.last_name, Dept_Manager.emp_no
-  FROM Employees
+SELECT Dept_Manager.Dept_no, Department.Dept_name, Dept_Manager.emp_no, Employees.first_name, Employees.last_name
+  FROM Department
   INNER JOIN Dept_Manager
-  ON Dept_Manager.emp_no = Employees.emp_no
-  INNER JOIN Department
-  ON Dept_Manager.Dept_no = Department.dept_no;
+  ON Dept_Manager.Dept_no = Department.dept_no
+  INNER JOIN Employees
+  ON Dept_Manager.emp_no = Employees.emp_no;
 
 -- 4. List the department of each employee with the following information: 
 -- employee number, last name, first name, and department name.
 
-SELECT Employees.emp_no, Employees.first_name, Employees.last_name, Department.dept_name
-FROM Employees
+SELECT  Dept_emp.emp_no,Employees.first_name, Employees.last_name,Department.dept_name
+FROM Department
 INNER JOIN Dept_emp ON
-Employees.emp_no= Dept_emp.emp_no;
-INNER JOIN Department
-ON  Dept_emp.dept_no=Department.dept_no;
+Department.dept_no = Dept_emp.dept_no
+INNER JOIN Employees ON
+Dept_emp.emp_no =Employees.emp_no
+
 
 
 -- 5. List first name, last name, and sex for employees 
@@ -80,13 +49,30 @@ FROM Employees
 WHERE(first_name ='Hercules' AND last_name LIKE 'B%');
 
 -- 6. List all employees in the Sales department, including their employee number, 
--- last name, first name, and department name.
+-- last name, first name, and department name. 
 
 
-SELECT Employees.first_name, Employees.last_name, Employees.emp_no, Department.Dept_name
-FROM Employees
+SELECT Department.dept_name, Dept_emp.emp_no,Employees.first_name, Employees.last_name
+FROM Department
 INNER JOIN Dept_emp ON
-Employees.emp_no= Dept_emp.emp_no;
-INNER JOIN Department
-ON  Dept_emp.dept_no=Department.dept_no
-WHERE dept_name = 'Sales'
+Department.dept_no = Dept_emp.dept_no
+INNER JOIN Employees ON
+Dept_emp.emp_no =Employees.emp_no
+WHERE (dept_name = 'Sales');
+
+
+-- 7. List all employees in the Sales and Development departments, including their 
+-- employee number, last name, first name, and department name.-done
+SELECT Department.dept_name, Dept_emp.emp_no,Employees.first_name, Employees.last_name
+FROM Department
+INNER JOIN Dept_emp ON
+Department.dept_no = Dept_emp.dept_no
+INNER JOIN Employees ON
+Dept_emp.emp_no =Employees.emp_no
+WHERE (dept_name = 'Sales' OR dept_name ='Development');
+
+-- 8. In descending order, list the frequency count of employee last names,
+--  i.e., how many employees share each last name.
+
+SELECT COUNT(DISTINCT(Employees.last_name))
+FROM Employees
